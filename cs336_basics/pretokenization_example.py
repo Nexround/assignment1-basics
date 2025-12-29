@@ -1,5 +1,7 @@
 import os
 from typing import BinaryIO
+import regex as re
+PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 
 
 def find_chunk_boundaries(
@@ -50,13 +52,14 @@ def find_chunk_boundaries(
 
 
 ## Usage
-with open(..., "rb") as f:
-    num_processes = 4
+with open("data/TinyStories-valid.txt", "rb") as f:
+    num_processes = 100
     boundaries = find_chunk_boundaries(f, num_processes, b"<|endoftext|>")
 
     # The following is a serial implementation, but you can parallelize this
     # by sending each start/end pair to a set of processes.
-    for start, end in zip(boundaries[:-1], boundaries[1:]):
+    for start, end in zip(boundaries[:-1], boundaries[1:]): # [:-1] 从开头取到倒数第 2 个元素（不包含最后一个）
         f.seek(start)
         chunk = f.read(end - start).decode("utf-8", errors="ignore")
+        result = re.finditer(PAT, chunk)
         # Run pre-tokenization on your chunk and store the counts for each pre-token
