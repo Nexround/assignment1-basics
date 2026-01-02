@@ -1,5 +1,5 @@
 from collections import defaultdict
-from utils import run_pretokenization
+from .utils import run_pretokenization
 from pprint import pprint
 
 
