@@ -98,4 +98,17 @@ def train_bpe(
 if __name__ == "__main__":
     vocab, merges = train_bpe("data/TinyStories-train.txt", 10000, ["<|endoftext|>"])
     # vocab, merges = train_bpe("data/TinyStories-valid.txt", 10000, ["<|endoftext|>"])
+    import json
+    import base64
+    
+    with open('vocab.json', 'w', encoding='utf-8') as f:
+        # Use base64 encoding to preserve all bytes correctly
+        vocab_serializable = {k: base64.b64encode(v).decode('ascii') if isinstance(v, bytes) else v for k, v in vocab.items()}
+        json.dump(vocab_serializable, f, ensure_ascii=False, indent=4)
+    
+    with open('merges.json', 'w', encoding='utf-8') as f:
+        # Use base64 encoding for merge pairs
+        merges_serializable = [[base64.b64encode(a).decode('ascii'), base64.b64encode(b).decode('ascii')] for a, b in merges]
+        json.dump(merges_serializable, f, ensure_ascii=False, indent=4)
+
     pprint(vocab)
