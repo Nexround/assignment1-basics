@@ -30,6 +30,7 @@ def run_linear(
     """
 
     from cs336_basics.linear import Linear
+
     linear = Linear(d_in, d_out)
     linear.load_state_dict({"weight": weights})
     return linear(in_features)
@@ -53,8 +54,11 @@ def run_embedding(
     Returns:
         Float[Tensor, "... d_model"]: Batch of embeddings returned by your Embedding layer.
     """
+    from cs336_basics.embedding import Embedding
 
-    raise NotImplementedError
+    embedding = Embedding(vocab_size, d_model)
+    embedding.load_state_dict({"embedding_weight": weights})
+    return embedding(token_ids)
 
 
 def run_swiglu(
@@ -86,7 +90,14 @@ def run_swiglu(
     # swiglu.w1.weight.data = w1_weight
     # swiglu.w2.weight.data = w2_weight
     # swiglu.w3.weight.data = w3_weight
-    raise NotImplementedError
+    from cs336_basics.ffn import FFN
+
+    ffn = FFN(d_model, d_ff)
+
+    ffn.w1.weight.data = w1_weight
+    ffn.w2.weight.data = w2_weight
+    ffn.w3.weight.data = w3_weight
+    return ffn(in_features)
 
 
 def run_scaled_dot_product_attention(
@@ -381,7 +392,11 @@ def run_rmsnorm(
         Float[Tensor,"... d_model"]: Tensor of with the same shape as `in_features` with the output of running
         RMSNorm of the `in_features`.
     """
-    raise NotImplementedError
+    from cs336_basics.rmsnorm import RMSNorm
+
+    rmsnorm = RMSNorm(d_model, eps=eps)
+    rmsnorm.load_state_dict({"gain": weights})
+    return rmsnorm(in_features)
 
 
 def run_silu(in_features: Float[Tensor, " ..."]) -> Float[Tensor, " ..."]:
@@ -563,6 +578,7 @@ def get_tokenizer(
         A BPE tokenizer that uses the provided vocab, merges, and special tokens.
     """
     from cs336_basics.BPE_tokenizer import Tokenizer
+
     return Tokenizer(vocab, merges, special_tokens)
 
 
